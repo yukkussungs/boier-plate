@@ -4,7 +4,7 @@ const port = 5000;
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const { User } = require("./models/Users");
-
+const { auth } = require("./middleware/auth");
 const cookieParser = require("cookie=parser");
 const config = require("./config/key");
 
@@ -68,6 +68,24 @@ app.post("/login", (req, res) => {
         .status(200)
         .json({ loginSuccess: true, userId: user._id });
     });
+  });
+});
+
+// check authentication
+/**
+ * path, middleware, function()
+ */
+app.get("api/users/auth", auth, (req, res) => {
+  // 여기까지 미들웨어를 통과해 왔다는 애기는 authentication이 True라는 말.
+  res.status(200).json({
+    _id: req.user._id,
+    isAdmin: req.user.role === 0 ? false : true,
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    lastname: req.user.lastname,
+    role: req.user.role,
+    image: req.user.image,
   });
 });
 
