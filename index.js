@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const { User } = require("./models/Users");
 const { auth } = require("./middleware/auth");
-const cookieParser = require("cookie=parser");
+const cookieParser = require("cookie-parser");
 const config = require("./config/key");
 
 // application/x-www-form-urlencoded
@@ -86,6 +86,16 @@ app.get("api/users/auth", auth, (req, res) => {
     lastname: req.user.lastname,
     role: req.user.role,
     image: req.user.image,
+  });
+});
+
+// logout router
+app.get("/api/users/logout", auth, (req, res) => {
+  User.findOneAndUpdate({ _id: req.user._id }, { token: "" }, (err, user) => {
+    if (err) return res.json({ success: false, err });
+    return res.status(200).send({
+      success: true,
+    });
   });
 });
 
