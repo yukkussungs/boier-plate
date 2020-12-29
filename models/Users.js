@@ -34,7 +34,7 @@ const userSchema = mongoose.Schema({
   },
 });
 
-userSchema.pre("save", function (next) {
+userSchema.pre("save", (next) => {
   var user = this;
   if (user.idModified("password")) {
     //password bcrypt
