@@ -34,9 +34,9 @@ const userSchema = mongoose.Schema({
   },
 });
 
-userSchema.pre("save", (next) => {
+userSchema.pre('save', function (next) {
   var user = this;
-  if (user.idModified("password")) {
+  if (user.isModified("password")) {
     //password bcrypt
     bcrypt.genSalt(saltRounds, function (err, salt) {
       if (err) return next(err);
@@ -54,7 +54,8 @@ userSchema.pre("save", (next) => {
 
 userSchema.methods.comparePassword = function (plainPassword, cb) {
   bcrypt.compare(plainPassword, this.password, function (err, isMatch) {
-    if (err) return cb(err), cb(null, isMatch);
+    if (err) return cb(err);
+    cb(null, isMatch);
   });
 };
 
@@ -71,7 +72,7 @@ userSchema.methods.generateToken = function (cb) {
   });
 };
 
-userSchema.methods.findByToken = function (token, cb) {
+userSchema.statics.findByToken = function (token, cb) {
   var user = this;
 
   // 토큰을 decode 한다.
